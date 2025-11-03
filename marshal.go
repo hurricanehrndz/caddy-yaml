@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/ghodss/yaml"
+	"gopkg.in/yaml.v3"
 )
 
+// yamlToJSON converts YAML bytes to JSON bytes.
+// It removes all entries with "x-" prefix before marshaling to JSON.
 func yamlToJSON(b []byte) ([]byte, error) {
 	var tmp map[string]interface{}
 
@@ -27,10 +29,10 @@ func yamlToJSON(b []byte) ([]byte, error) {
 	return json.Marshal(tmp)
 }
 
+// varsFromBody extracts template variables from x- prefixed YAML fields.
+// It validates that variable names don't contain hyphens or dots (except the x- prefix).
+// Returns a map of variable names to values for use in template execution.
 func varsFromBody(b []byte, env []string) (map[string]interface{}, error) {
-	var tmp map[string]interface{}
-	var vars map[string]interface{}
-
 	varsBytes, err := extractVariables(b)
 	if err != nil {
 		return nil, err
@@ -41,22 +43,20 @@ func varsFromBody(b []byte, env []string) (map[string]interface{}, error) {
 		return nil, err
 	}
 
+	var tmp map[string]interface{}
 	if err := yaml.Unmarshal(varsBytes, &tmp); err != nil {
 		return nil, err
 	}
 
-	vars = make(map[string]interface{})
-
+	vars := make(map[string]interface{})
 	for xkey, val := range tmp {
 		key := xkey[2:] // discard x- prefix
 
-		// go template prohibits hyphen `-` in field names.
-		if strings.Index(key, "-") > 0 {
+		if strings.Contains(key, "-") {
 			return nil, fmt.Errorf("template: apart from 'x-' prefix, '-' is not permitted in extension field name for %s", xkey)
 		}
 
-		// go template uses dot `.` for nesting.
-		if strings.Index(key, ".") > 0 {
+		if strings.Contains(key, ".") {
 			return nil, fmt.Errorf("template: '.' is not permitted in extension field name for %s", xkey)
 		}
 
@@ -64,5 +64,4 @@ func varsFromBody(b []byte, env []string) (map[string]interface{}, error) {
 	}
 
 	return vars, nil
-
 }

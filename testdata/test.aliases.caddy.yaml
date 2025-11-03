@@ -1,0 +1,11 @@
+apps:
+  http:
+    servers:
+      srv0:
+        routes:
+          - handle:
+              - handler: file_server
+                root: &webroot /var/www
+          - handle:
+              - handler: templates
+                root: *webroot

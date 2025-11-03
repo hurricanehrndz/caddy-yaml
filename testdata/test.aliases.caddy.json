@@ -1,0 +1,28 @@
+{
+  "apps": {
+    "http": {
+      "servers": {
+        "srv0": {
+          "routes": [
+            {
+              "handle": [
+                {
+                  "handler": "file_server",
+                  "root": "/var/www"
+                }
+              ]
+            },
+            {
+              "handle": [
+                {
+                  "handler": "templates",
+                  "root": "/var/www"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  }
+}

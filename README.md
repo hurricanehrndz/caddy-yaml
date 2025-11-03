@@ -1,8 +1,5 @@
 # caddy-yaml
 
-[![Go](https://github.com/abiosoft/caddy-yaml/workflows/Go/badge.svg)](https://github.com/abiosoft/caddy-yaml/actions)
-
-
 Alternative Caddy YAML config adapter with extra features.
 
 ## Install

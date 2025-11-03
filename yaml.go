@@ -1,3 +1,5 @@
+// Package caddyyaml provides a YAML config adapter for Caddy v2.
+// It supports template variables using sprig functions and environment variable expansion.
 package caddyyaml
 
 import (
@@ -17,6 +19,6 @@ type Adapter struct{}
 const envOptionName = "yaml.Env"
 
 // Adapt converts the YAML config in body to Caddy JSON.
-func (a Adapter) Adapt(body []byte, options map[string]interface{}) ([]byte, []caddyconfig.Warning, error) {
+func (a Adapter) Adapt(body []byte, options map[string]any) ([]byte, []caddyconfig.Warning, error) {
 	return adapt(body, options)
 }

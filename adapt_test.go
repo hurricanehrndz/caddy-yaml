@@ -2,7 +2,7 @@ package caddyyaml
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"os"
 	"reflect"
 	"testing"
 )
@@ -10,23 +10,27 @@ import (
 func TestApply(t *testing.T) {
 	tests := []struct {
 		name             string
-		filename         string
+		yamlFile         string
+		jsonFile         string
 		env              []string
 		expectedWarnings []string
 	}{
 		{
 			name:     "simple",
-			filename: "test.caddy.json",
+			yamlFile: "test.caddy.yaml",
+			jsonFile: "test.caddy.json",
 			env:      []string{"ENVIRONMENT=something"},
 		},
 		{
 			name:     "production environment",
-			filename: "test.caddy.prod.json",
+			yamlFile: "test.caddy.yaml",
+			jsonFile: "test.caddy.prod.json",
 			env:      []string{"ENVIRONMENT=production"},
 		},
 		{
 			name:     "bad environment variables",
-			filename: "test.caddy.json",
+			yamlFile: "test.caddy.yaml",
+			jsonFile: "test.caddy.json",
 			env: []string{
 				"ENVIRONMENT=bad",
 				"INVALID%=invalid_name",
@@ -36,15 +40,21 @@ func TestApply(t *testing.T) {
 				"test.caddy.yaml:-1: environment variable \"INVALID%\" cannot be used in template",
 			},
 		},
+		{
+			name:     "YAML aliases",
+			yamlFile: "test.aliases.caddy.yaml",
+			jsonFile: "test.aliases.caddy.json",
+			env:      []string{"ENVIRONMENT=production"},
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			b, err := ioutil.ReadFile("./testdata/test.caddy.yaml")
+			b, err := os.ReadFile("./testdata/" + tt.yamlFile)
 			if err != nil {
 				t.Fatal(err)
 			}
-			adaptedBytes, warnings, err := Adapter{}.Adapt(b, map[string]interface{}{
+			adaptedBytes, warnings, err := Adapter{}.Adapt(b, map[string]any{
 				"filename":    "test.caddy.yaml",
 				envOptionName: tt.env,
 			})
@@ -65,7 +75,7 @@ func TestApply(t *testing.T) {
 				t.Fatalf("expected additional warnings: %v", tt.expectedWarnings[len(warnings):])
 			}
 
-			jsonBytes, err := ioutil.ReadFile("./testdata/" + tt.filename)
+			jsonBytes, err := os.ReadFile("./testdata/" + tt.jsonFile)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -74,15 +84,13 @@ func TestApply(t *testing.T) {
 				t.Log(string(adaptedBytes))
 				t.Fatal("adapter config does not match expected config")
 			}
-
 		})
 	}
-
 }
 
-func jsonToObj(b []byte) (obj map[string]interface{}) {
+func jsonToObj(b []byte) (obj map[string]any) {
 	if err := json.Unmarshal(b, &obj); err != nil {
 		panic(err)
 	}
-	return
+	return obj
 }

@@ -7,7 +7,10 @@ import (
 	"github.com/caddyserver/caddy/v2/caddyconfig"
 )
 
-func adapt(body []byte, options map[string]interface{}) ([]byte, []caddyconfig.Warning, error) {
+// adapt processes YAML configuration and converts it to Caddy JSON format.
+// It extracts template variables, applies template transformations, and converts YAML to JSON.
+// Returns the JSON configuration, any warnings encountered, and an error if the adaptation fails.
+func adapt(body []byte, options map[string]any) ([]byte, []caddyconfig.Warning, error) {
 	filename, ok := options["filename"].(string)
 	if !ok {
 		return nil, nil, errors.New("missing filename option")
