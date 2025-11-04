@@ -1,82 +1,96 @@
 # caddy-yaml
 
-Alternative Caddy YAML config adapter with extra features.
+YAML config adapter for Caddy with templating and YAML 1.2 support.
+
+> **⚠️ INCOMPATIBILITY WARNING**  
+> This adapter is **incompatible** with all other YAML adapters (e.g.,
+> [iamd3vil/caddy_yaml_adapter](https://github.com/iamd3vil/caddy_yaml_adapter)).
+> Both register as the `yaml` adapter - only one can be used at a time.
 
 ## Install
 
 Install with [xcaddy](https://github.com/caddyserver/xcaddy).
 
+```sh
+xcaddy build --with github.com/hurricanehrndz/caddy-yaml
 ```
-xcaddy build \
-    --with github.com/abiosoft/caddy-yaml
-```
+
 ## Usage
 
 Specify with the `--adapter` flag for `caddy run`.
-```
+
+```sh
 caddy run --config /path/to/yaml/config.yaml --adapter yaml
 ```
 
-## Comparison with existing YAML adapter
+## Features
 
-This project does a few extra things.
+### YAML 1.2 with Anchors & Aliases
 
-* Conditional configurations with Templates.
+Full support for YAML 1.2 anchors (`&`) and aliases (`*`):
 
-  ```yaml
-  #{if ne $ENVIRONMENT "production"}
-  logging:
-    logs:
-      default: { level: DEBUG }
-  #{end}
-  ```
+```yaml
+# anchor declaration
+x-file_server: &file_server
+  handler: file_server
+  hide: [".git"]
+  index_names: [index.html]
 
-- Extension Fields. A convension used in [Docker Compose](https://docs.docker.com/compose/compose-file/compose-file-v3/#extension-fields).
+# reuse alias
+apps:
+  http:
+    servers:
+      srv0:
+        routes:
+          - handle:
+              - <<: *file_server
+                root: /var/www/blog/public
+          # reuse alias again
+          - handle:
+              - <<: *file_server
+                root: /var/www/api/docs
+```
 
-  Top level keys prefixed with `x-` are discarded. This makes it easier to leverage YAML anchors and aliases, while avoiding Caddy errors due to unknown fields.
+### Extension Fields
 
-  ```yaml
-  # anchor declaration
-  x-file_server: &file_server
-    handler: file_server
-    hide: [".git"]
-    index_names: [index.html]
+Top-level keys prefixed with `x-` are discarded, following the [Docker Compose
+convention](https://docs.docker.com/compose/compose-file/compose-file-v3/#extension-fields).
+This makes it easier to leverage YAML anchors and aliases, while avoiding Caddy
+errors due to unknown fields.
 
-  # reuse alias
-  ...
-  handle:
-    - <<: *file_server
-      root: /var/www/blog/public
+### Conditional Configurations with Templates
 
-  # reuse alias
-  ...
-  handle:
-    - <<: *file_server
-      root: /var/www/api/docs
-  ```
+Use Go templates for dynamic configurations:
 
-* Config-time environment variables
+```yaml
+#{if ne $ENVIRONMENT "production"}
+logging:
+  logs:
+    default: { level: DEBUG }
+#{end}
+```
 
-  Without the Caddyfile, Caddy's native configuration limits to runtime environment variables.
-  There are use cases for knowing the environment variables at configuration time. e.g. troubleshooting purposes.
+### Config-time Environment Variables
 
-  ```yaml
-  listen: "#{ $PORT }"
-  ```
+Without the Caddyfile, Caddy's native configuration limits to runtime
+environment variables. There are use cases for knowing the environment
+variables at configuration time (e.g., troubleshooting purposes).
 
-If the above features are not needed or utilised, the behaviour is identical to [iamd3vil/caddy_yaml_adapter](https://github.com/iamd3vil/caddy_yaml_adapter).
-
-
-_**Note** that both adapters cannot be built with Caddy, they are incompatible. They both register as `yaml` config adapter and at most one config adapter is allowed per config format_.
+```yaml
+listen: "#{ $PORT }"
+```
 
 
 ## Templating
 
-Anything supported by [Go templates](https://pkg.go.dev/text/template) can be used, as well as any [Sprig](https://masterminds.github.io/sprig) function.
+Anything supported by [Go templates](https://pkg.go.dev/text/template) can be
+used, as well as any [Sprig](https://masterminds.github.io/sprig) function.
 
-### Delimeters
+### Delimiters
 
-Delimeters are `#{` and `}`. e.g. `#{ .title }`. The choice of delimeters ensures the YAML config file remains a valid YAML file that can be validated by the schema.
+Delimiters are `#{` and `}`. e.g. `#{ .title }`. The choice of delimiters
+ensures the YAML config file remains a valid YAML file that can be validated by
+the schema.
 
 ### Values
 
@@ -98,7 +112,8 @@ handle:
     body: "#{ .hello } with #{ .nest.value }"
 ```
 
-_If string interpolation is not needed, YAML anchors and aliases can also be used to achieve this_.
+_If string interpolation is not needed, YAML anchors and aliases can also be
+used to achieve this_.
 
 ### Environment Variables
 
@@ -114,9 +129,9 @@ root: "#{ $APP_ROOT_DIR }/public"
 
 Caddy supports runtime environment variables via [`{env.*}` placeholders](https://caddyserver.com/docs/caddyfile/concepts#environment-variables).
 
-### Example Config
+## Example Config
 
-Check the [test YAML configuration file](https://github.com/abiosoft/caddy-yaml/blob/master/testdata/test.caddy.yaml).
+Check the [test YAML configuration file](testdata/test.caddy.yaml).
 
 ## License
 
