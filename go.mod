@@ -1,4 +1,4 @@
-module github.com/abiosoft/caddy-yaml
+module github.com/hurricanehrndz/caddy-yaml
 
 go 1.23
 
