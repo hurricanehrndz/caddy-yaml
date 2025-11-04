@@ -1,0 +1,10 @@
+apps:
+  http:
+    servers:
+      srv0:
+        routes:
+          - match:
+              - host: [example.com]
+            handle:
+              - handler: static_response
+                body: "Hello from directory include"

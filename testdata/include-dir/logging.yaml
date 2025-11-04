@@ -1,0 +1,4 @@
+logging:
+  logs:
+    default:
+      level: INFO

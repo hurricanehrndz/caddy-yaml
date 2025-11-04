@@ -36,6 +36,7 @@ include:
   - path: 
       - ./sites/site1.yaml
       - ./sites/site2.yaml
+  - path: ./config.d  # Include all .yaml/.yml files from directory
 
 apps:
   http:
@@ -45,8 +46,11 @@ apps:
 Includes support:
 - Relative paths (resolved from the including file's directory)
 - Multiple files per include entry
+- Directory includes (processes all `.yaml` and `.yml` files in alphabetical order)
 - Circular dependency detection
 - Deep merging of configurations (conflicts will cause an error)
+
+**Note:** When including a directory, files are processed in alphabetical order. Subdirectories are not processed recursively.
 
 ### YAML 1.2 with Anchors & Aliases
 

@@ -58,6 +58,12 @@ func TestApply(t *testing.T) {
 			jsonFile: "test.include.json",
 			env:      []string{"ENVIRONMENT=test"},
 		},
+		{
+			name:     "include directory support",
+			yamlFile: "test.include-dir.yaml",
+			jsonFile: "test.include-dir.json",
+			env:      []string{"ENVIRONMENT=test"},
+		},
 	}
 
 	for _, tt := range tests {

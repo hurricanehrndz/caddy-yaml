@@ -47,7 +47,7 @@ func processIncludes(body []byte, baseDir string, included []string) ([]byte, er
 	// Process each include
 	for _, inc := range includes {
 		for _, path := range inc.Path {
-			if err := processIncludeFile(path, baseDir, included, config); err != nil {
+			if err := processIncludeStatements(path, baseDir, included, config); err != nil {
 				return nil, err
 			}
 		}
@@ -57,13 +57,57 @@ func processIncludes(body []byte, baseDir string, included []string) ([]byte, er
 	return yaml.Marshal(config)
 }
 
-// processIncludeFile loads, processes, and merges a single include file into the config.
-func processIncludeFile(path, baseDir string, included []string, config map[string]any) error {
+// processIncludeStatements loads, processes, and merges a single include file or directory into the config.
+// If path is a directory, all .yaml and .yml files in the directory are processed.
+func processIncludeStatements(path, baseDir string, included []string, config map[string]any) error {
 	// Resolve relative paths
 	if !filepath.IsAbs(path) {
 		path = filepath.Join(baseDir, path)
 	}
 
+	// Check if path is a directory
+	info, err := os.Stat(path)
+	if err != nil {
+		return fmt.Errorf("failed to stat path %s: %w", path, err)
+	}
+
+	if info.IsDir() {
+		return processIncludeDir(path, included, config)
+	}
+
+	return processIncludeSingleFile(path, included, config)
+}
+
+// processIncludeDir processes all YAML files in a directory.
+func processIncludeDir(dirPath string, included []string, config map[string]any) error {
+	entries, err := os.ReadDir(dirPath)
+	if err != nil {
+		return fmt.Errorf("failed to read directory %s: %w", dirPath, err)
+	}
+
+	// Process files in sorted order for deterministic results
+	for _, entry := range entries {
+		if entry.IsDir() {
+			continue
+		}
+
+		// Only process .yaml and .yml files
+		name := entry.Name()
+		if filepath.Ext(name) != ".yaml" && filepath.Ext(name) != ".yml" {
+			continue
+		}
+
+		filePath := filepath.Join(dirPath, name)
+		if err := processIncludeSingleFile(filePath, included, config); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// processIncludeSingleFile loads, processes, and merges a single include file into the config.
+func processIncludeSingleFile(path string, included []string, config map[string]any) error {
 	// Check for circular includes
 	if slices.Contains(included, path) {
 		return fmt.Errorf("circular include detected: %s", path)
