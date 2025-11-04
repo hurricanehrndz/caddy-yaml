@@ -64,6 +64,12 @@ func TestApply(t *testing.T) {
 			jsonFile: "test.include-dir.json",
 			env:      []string{"ENVIRONMENT=test"},
 		},
+		{
+			name:     "placeholder corruption",
+			yamlFile: "test.placeholders.yaml",
+			jsonFile: "test.placeholders.json",
+			env:      []string{"ENVIRONMENT=test"},
+		},
 	}
 
 	for _, tt := range tests {
