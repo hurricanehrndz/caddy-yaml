@@ -1,0 +1,10 @@
+apps:
+  http:
+    servers:
+      default:
+        listen: ["127.0.0.1:80"]
+        routes:
+          - handle:
+              - handler: static_response
+                body: "Hello {env.USER}"
+                status_code: 200

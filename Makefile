@@ -12,3 +12,12 @@ format:
 test:
 	go test -v -race  -covermode=atomic ./...
 
+
+caddy: build/caddy
+build/caddy:
+	test -f $(@D) || mkdir -p $(@D)
+	@go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest
+	xcaddy build \
+		--output $(@) \
+		--with github.com/hurricanehrndz/caddy-yaml=.
+
