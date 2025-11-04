@@ -1,0 +1,8 @@
+x-common-port: &port 8080
+
+apps:
+  http:
+    servers:
+      srv0:
+        listen:
+          - ":#{ .common_port }"

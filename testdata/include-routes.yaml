@@ -1,0 +1,14 @@
+x-route-handler: &static
+  handler: static_response
+  status_code: "200"
+
+apps:
+  http:
+    servers:
+      srv0:
+        routes:
+          - match:
+              - host: [example.com]
+            handle:
+              - <<: *static
+                body: "Hello from included file"

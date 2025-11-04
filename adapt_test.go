@@ -37,7 +37,7 @@ func TestApply(t *testing.T) {
 				"VALUE_WITH_BACKSLASH=foo\\bar",
 			},
 			expectedWarnings: []string{
-				"test.caddy.yaml:-1: environment variable \"INVALID%\" cannot be used in template",
+				"./testdata/test.caddy.yaml:-1: environment variable \"INVALID%\" cannot be used in template",
 			},
 		},
 		{
@@ -45,6 +45,18 @@ func TestApply(t *testing.T) {
 			yamlFile: "test.aliases.caddy.yaml",
 			jsonFile: "test.aliases.caddy.json",
 			env:      []string{"ENVIRONMENT=production"},
+		},
+		{
+			name:     "nested extension fields",
+			yamlFile: "test.nested-extensions.yaml",
+			jsonFile: "test.nested-extensions.json",
+			env:      []string{"ENVIRONMENT=test"},
+		},
+		{
+			name:     "include support",
+			yamlFile: "test.include.yaml",
+			jsonFile: "test.include.json",
+			env:      []string{"ENVIRONMENT=test"},
 		},
 	}
 
@@ -55,7 +67,7 @@ func TestApply(t *testing.T) {
 				t.Fatal(err)
 			}
 			adaptedBytes, warnings, err := Adapter{}.Adapt(b, map[string]any{
-				"filename":    "test.caddy.yaml",
+				"filename":    "./testdata/" + tt.yamlFile,
 				envOptionName: tt.env,
 			})
 			if err != nil {

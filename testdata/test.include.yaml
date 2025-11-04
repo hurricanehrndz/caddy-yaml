@@ -1,0 +1,10 @@
+include:
+  - path: ./include-base.yaml
+  - path: ./include-routes.yaml
+
+apps:
+  http:
+    servers:
+      srv0:
+        logs:
+          default_logger_name: default

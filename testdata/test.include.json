@@ -1,0 +1,30 @@
+{
+  "apps": {
+    "http": {
+      "servers": {
+        "srv0": {
+          "listen": [":8080"],
+          "logs": {
+            "default_logger_name": "default"
+          },
+          "routes": [
+            {
+              "match": [
+                {
+                  "host": ["example.com"]
+                }
+              ],
+              "handle": [
+                {
+                  "handler": "static_response",
+                  "status_code": "200",
+                  "body": "Hello from included file"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "apps": {
+    "http": {
+      "x-debug": true,
+      "servers": {
+        "srv0": {
+          "x-internal-id": "srv-001",
+          "listen": [
+            ":80"
+          ],
+          "routes": [
+            {
+              "match": [
+                {
+                  "x-match-id": "m1",
+                  "host": [
+                    "example.com"
+                  ]
+                }
+              ],
+              "handle": [
+                {
+                  "handler": "static_response",
+                  "x-handler-note": "test handler",
+                  "body": "Hello"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  }
+}
