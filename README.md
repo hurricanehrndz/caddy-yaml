@@ -1,5 +1,8 @@
 # caddy-yaml
 
+[![codecov](https://codecov.io/gh/hurricanehrndz/caddy-yaml/graph/badge.svg?token=XW8QF76UVU)](https://codecov.io/gh/hurricanehrndz/caddy-yaml)
+[![Tests](https://github.com/hurricanehrndz/caddy-yaml/actions/workflows/test.yml/badge.svg)](https://github.com/hurricanehrndz/caddy-yaml/actions)
+
 YAML config adapter for Caddy with templating and YAML 1.2 support.
 
 > **⚠️ INCOMPATIBILITY WARNING**  
