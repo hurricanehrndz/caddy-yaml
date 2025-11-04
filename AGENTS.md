@@ -30,5 +30,5 @@
 
 **Style:**
 - Align the happy path to the left
-- Ensure code adheres to following coding principles: KISS, SRP, DRY and prioritize clarity over brevity or clever 
+- Ensure code adheres to following coding principles: KISS, SRP, DRY and prioritize clarity over brevity or clever
 - Use modern features of Go when possible

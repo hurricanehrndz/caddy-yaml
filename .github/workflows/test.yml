@@ -2,9 +2,9 @@ name: Tests
 
 on:
   push:
-    branches: [ main, master, develop ]
+    branches: [main, master, develop]
   pull_request:
-    branches: [ main, master, develop ]
+    branches: [main, master, develop]
     types: [opened, synchronize, reopened]
   schedule:
     # Run weekly on Monday at 00:00 UTC
@@ -76,7 +76,7 @@ jobs:
 
       - name: Validate test configuration
         run: |
-            ./caddy validate --config testdata/test-config.yaml --adapter yaml
+          ./caddy validate --config testdata/test-config.yaml --adapter yaml
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5

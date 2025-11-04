@@ -22,7 +22,7 @@ config/
 include:
   - path: ./common/defaults.yaml
   - path: ./common/tls.yaml
-  - path: 
+  - path:
       - ./sites/blog.yaml
       - ./sites/api.yaml
 

@@ -10,5 +10,5 @@ apps:
           - match:
               - host: [example.com]
             handle:
-              - <<: *static
+              - !!merge <<: *static
                 body: "Hello from included file"

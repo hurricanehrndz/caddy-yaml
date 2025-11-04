@@ -4,10 +4,10 @@
 
 # This config adapts to the test.caddy.[prod.]json files.
 x-domains: &domains
-#{if eq $ENVIRONMENT "production"}
+  #{if eq $ENVIRONMENT "production"}
   - blog.domain
   - website.domain
-#{else}
+  #{else}
   - blog.localhost
   - website.localhost
 #{end}
@@ -28,12 +28,12 @@ apps:
           - match:
               - host: ["#{.}"]
             handle:
-              - <<: *static_handler
+              - !!merge <<: *static_handler
                 body: "Hello from #{.}"
-          #{end}
+                #{end}
 
 #{if ne $ENVIRONMENT "production"}
 logging:
   logs:
-    default: { level: DEBUG }
+    default: {level: DEBUG}
 #{end}

@@ -5,7 +5,7 @@
 
 YAML config adapter for Caddy with templating and YAML 1.2 support.
 
-> **⚠️ INCOMPATIBILITY WARNING**  
+> **⚠️ INCOMPATIBILITY WARNING**
 > This adapter is **incompatible** with all other YAML adapters (e.g.,
 > [iamd3vil/caddy_yaml_adapter](https://github.com/iamd3vil/caddy_yaml_adapter)).
 > Both register as the `yaml` adapter - only one can be used at a time.
@@ -36,7 +36,7 @@ Split your configuration across multiple files using Docker Compose-style includ
 include:
   - path: ./common/defaults.yaml
   - path: ./routes/api.yaml
-  - path: 
+  - path:
       - ./sites/site1.yaml
       - ./sites/site2.yaml
   - path: ./config.d  # Include all .yaml/.yml files from directory
@@ -147,7 +147,7 @@ the schema.
 ### Values
 
 Extension fields can be reused anywhere else in the YAML config as template variables.
-Hyphens in extension field names are automatically converted to underscores for 
+Hyphens in extension field names are automatically converted to underscores for
 template compatibility.
 
 ```yaml
@@ -209,9 +209,9 @@ This pipeline allows:
 
 ## Acknowledgments
 
-The include processing and extension field handling features were inspired by 
-[compose-go](https://github.com/compose-spec/compose-go) (Copyright 2020 The Compose 
-Specification Authors), licensed under Apache License 2.0. While the implementation 
+The include processing and extension field handling features were inspired by
+[compose-go](https://github.com/compose-spec/compose-go) (Copyright 2020 The Compose
+Specification Authors), licensed under Apache License 2.0. While the implementation
 is original, the design patterns and concepts follow the Docker Compose specification.
 
 ## License
