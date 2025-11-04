@@ -54,7 +54,7 @@ apps:
 ### Extension Fields
 
 Top-level keys prefixed with `x-` are discarded, following the [Docker Compose
-convention](https://docs.docker.com/compose/compose-file/compose-file-v3/#extension-fields).
+convention](https://docs.docker.com/reference/compose-file/extension/).
 This makes it easier to leverage YAML anchors and aliases, while avoiding Caddy
 errors due to unknown fields.
 
