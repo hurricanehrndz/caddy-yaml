@@ -7,10 +7,13 @@
 package caddyyaml
 
 import (
+	"regexp"
 	"strings"
 
 	"gopkg.in/yaml.v3"
 )
+
+var extensionLineRegexp = regexp.MustCompile(`^x\-([a-zA-Z0-9\.\_\-]+)(\s*)\:`)
 
 // removeExtensions removes only top-level x- prefixed keys from the config.
 // Nested x- fields are preserved. This follows the Docker Compose convention
@@ -22,6 +25,12 @@ func removeExtensions(m map[string]any) {
 			delete(m, key)
 		}
 	}
+}
+
+// extractRawExtensions extracts x- prefixed extension fields from the body.
+func extractRawExtensions(body []byte) ([]byte, error) {
+	extensions, _ := extractAllMatchingTopLevelSections(body, extensionLineRegexp)
+	return extensions, nil
 }
 
 // parseExtensionVars parses YAML and extracts x- variables for templates.

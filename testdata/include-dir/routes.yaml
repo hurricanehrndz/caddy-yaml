@@ -1,3 +1,5 @@
+x-static_response_body: &static_response_body "Hello from directory include"
+
 apps:
   http:
     servers:
@@ -7,4 +9,4 @@ apps:
               - host: [example.com]
             handle:
               - handler: static_response
-                body: "Hello from directory include"
+                body: *static_response_body
