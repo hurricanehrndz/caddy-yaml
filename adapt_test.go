@@ -76,6 +76,12 @@ func TestApply(t *testing.T) {
 			jsonFile: "test.placeholders.json",
 			env:      []string{"ENVIRONMENT=test"},
 		},
+		{
+			name:     "split routes for single server",
+			yamlFile: "test.split-routes.yaml",
+			jsonFile: "test.split-routes.json",
+			env:      []string{"ENVIRONMENT=test"},
+		},
 	}
 
 	for _, tt := range tests {

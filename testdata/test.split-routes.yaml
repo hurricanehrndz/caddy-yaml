@@ -1,0 +1,11 @@
+include:
+  - path: ./split-routes/server-config.yaml
+  - path: ./split-routes/routes.yaml
+  - path: ./split-routes/routes2.yaml
+
+apps:
+  http:
+    servers:
+      yhap:
+        logs:
+          default_logger_name: default

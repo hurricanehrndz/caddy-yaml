@@ -1,0 +1,10 @@
+apps:
+  http:
+    servers:
+      yhap:
+        routes:
+          - match:
+              - host: [example.com]
+            handle:
+              - handler: file_server
+                root: /var/www/html

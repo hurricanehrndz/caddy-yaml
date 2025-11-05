@@ -1,0 +1,6 @@
+apps:
+  http:
+    servers:
+      yhap:
+        listen:
+          - 127.0.1.1:80

@@ -1,0 +1,11 @@
+apps:
+  http:
+    servers:
+      yhap:
+        routes:
+          - match:
+              - host: [api.example.com]
+            handle:
+              - handler: reverse_proxy
+                upstreams:
+                  - dial: localhost:8080

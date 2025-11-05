@@ -224,21 +224,36 @@ func mergeConfig(target, source map[string]any) error {
 			continue
 		}
 
-		// If both are maps, merge recursively
-		sourceMap, sourceIsMap := sourceValue.(map[string]any)
-		targetMap, targetIsMap := targetValue.(map[string]any)
-
-		if sourceIsMap && targetIsMap {
-			if err := mergeConfig(targetMap, sourceMap); err != nil {
-				return err
-			}
-			continue
+		if err := mergeValue(target, key, targetValue, sourceValue); err != nil {
+			return err
 		}
+	}
 
-		// Check for conflicts (different types or non-map values)
-		if !reflect.DeepEqual(sourceValue, targetValue) {
-			return fmt.Errorf("conflict at key %q: cannot merge %T with %T", key, targetValue, sourceValue)
-		}
+	return nil
+}
+
+// mergeValue merges a single value into the target map at the specified key.
+func mergeValue(target map[string]any, key string, targetValue, sourceValue any) error {
+	// If both are maps, merge recursively
+	sourceMap, sourceIsMap := sourceValue.(map[string]any)
+	targetMap, targetIsMap := targetValue.(map[string]any)
+
+	if sourceIsMap && targetIsMap {
+		return mergeConfig(targetMap, sourceMap)
+	}
+
+	// If both are arrays, concatenate them
+	sourceSlice, sourceIsSlice := sourceValue.([]any)
+	targetSlice, targetIsSlice := targetValue.([]any)
+
+	if sourceIsSlice && targetIsSlice {
+		target[key] = append(targetSlice, sourceSlice...)
+		return nil
+	}
+
+	// Check for conflicts (different types or non-map values)
+	if !reflect.DeepEqual(sourceValue, targetValue) {
+		return fmt.Errorf("conflict at key %q: cannot merge %T with %T", key, targetValue, sourceValue)
 	}
 
 	return nil

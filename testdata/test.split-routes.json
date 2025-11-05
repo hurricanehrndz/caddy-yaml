@@ -1,0 +1,52 @@
+{
+  "apps": {
+    "http": {
+      "servers": {
+        "yhap": {
+          "listen": [
+            "127.0.1.1:80"
+          ],
+          "routes": [
+            {
+              "match": [
+                {
+                  "host": [
+                    "example.com"
+                  ]
+                }
+              ],
+              "handle": [
+                {
+                  "handler": "file_server",
+                  "root": "/var/www/html"
+                }
+              ]
+            },
+            {
+              "match": [
+                {
+                  "host": [
+                    "api.example.com"
+                  ]
+                }
+              ],
+              "handle": [
+                {
+                  "handler": "reverse_proxy",
+                  "upstreams": [
+                    {
+                      "dial": "localhost:8080"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "logs": {
+            "default_logger_name": "default"
+          }
+        }
+      }
+    }
+  }
+}
