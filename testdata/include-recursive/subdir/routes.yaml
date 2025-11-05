@@ -1,0 +1,11 @@
+apps:
+  http:
+    servers:
+      srv0:
+        routes:
+          - match:
+              - path: ["/api/*"]
+            handle:
+              - handler: reverse_proxy
+                upstreams:
+                  - dial: localhost:9000

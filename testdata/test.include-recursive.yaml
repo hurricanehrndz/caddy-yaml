@@ -1,0 +1,9 @@
+include:
+  - path: ./include-recursive
+
+apps:
+  http:
+    servers:
+      srv0:
+        logs:
+          default_logger_name: default

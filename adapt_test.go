@@ -65,6 +65,12 @@ func TestApply(t *testing.T) {
 			env:      []string{"ENVIRONMENT=test"},
 		},
 		{
+			name:     "include recursive directory support",
+			yamlFile: "test.include-recursive.yaml",
+			jsonFile: "test.include-recursive.json",
+			env:      []string{"ENVIRONMENT=test"},
+		},
+		{
 			name:     "placeholder corruption",
 			yamlFile: "test.placeholders.yaml",
 			jsonFile: "test.placeholders.json",

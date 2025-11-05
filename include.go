@@ -78,32 +78,39 @@ func processIncludeStatements(path, baseDir string, included []string, config ma
 	return processIncludeSingleFile(path, included, config)
 }
 
-// processIncludeDir processes all YAML files in a directory.
+// processIncludeDir recursively processes all YAML files in a directory and its subdirectories.
 func processIncludeDir(dirPath string, included []string, config map[string]any) error {
 	entries, err := os.ReadDir(dirPath)
 	if err != nil {
 		return fmt.Errorf("failed to read directory %s: %w", dirPath, err)
 	}
 
-	// Process files in sorted order for deterministic results
+	// Process entries in sorted order for deterministic results
 	for _, entry := range entries {
-		if entry.IsDir() {
-			continue
-		}
-
-		// Only process .yaml and .yml files
-		name := entry.Name()
-		if filepath.Ext(name) != ".yaml" && filepath.Ext(name) != ".yml" {
-			continue
-		}
-
-		filePath := filepath.Join(dirPath, name)
-		if err := processIncludeSingleFile(filePath, included, config); err != nil {
+		fullPath := filepath.Join(dirPath, entry.Name())
+		err := processIncludeDirEntry(entry, fullPath, included, config)
+		if err != nil {
 			return err
 		}
 	}
 
 	return nil
+}
+
+// processIncludeDirEntry processes a single directory entry (file or subdirectory).
+func processIncludeDirEntry(entry os.DirEntry, fullPath string, included []string, config map[string]any) error {
+	if entry.IsDir() {
+		// Recursively process subdirectories
+		return processIncludeDir(fullPath, included, config)
+	}
+
+	// Only process .yaml and .yml files
+	ext := filepath.Ext(entry.Name())
+	if ext != ".yaml" && ext != ".yml" {
+		return nil
+	}
+
+	return processIncludeSingleFile(fullPath, included, config)
 }
 
 // processIncludeSingleFile loads, processes, and merges a single include file into the config.
