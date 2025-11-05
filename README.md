@@ -30,6 +30,9 @@ caddy run --config /path/to/yaml/config.yaml --adapter yaml
 
 ### Include Files
 
+> **⚠️ WARNING**
+> This adapter expects each individual file to be a valid YAML file on its own.
+
 Split your configuration across multiple files using Docker Compose-style includes:
 
 ```yaml
@@ -53,7 +56,7 @@ Includes support:
 - Circular dependency detection
 - Deep merging of configurations (conflicts will cause an error)
 
-**Note:** When including a directory, files are processed in alphabetical order. Subdirectories are not processed recursively.
+**Note:** When including a directory, files are processed in alphabetical order. Subdirectories are processed recursively.
 
 ### YAML 1.2 with Anchors & Aliases
 
