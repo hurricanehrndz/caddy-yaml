@@ -18,22 +18,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
-      - name: Set up Go
-        uses: actions/setup-go@v5
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+
+      - name: Set up Cachix
+        uses: cachix/cachix-action@v16
         with:
-          go-version-file: '.go-version'
-          cache: true
+          name: devenv
+
+      - name: Install devenv
+        run: nix profile add nixpkgs#devenv
 
       - name: Download dependencies
-        run: go mod download
+        run: devenv shell -- go mod download
 
-      - name: Download tools
-        run: go mod download -modfile=tools.mod
-
-      - uses: actions/setup-python@v3
-      - uses: pre-commit/action@v3.0.1
+      - name: Run git hooks
+        run: devenv tasks run devenv:git-hooks:run --show-output
 
       - name: Check formatting
         run: |
@@ -46,8 +48,8 @@ jobs:
 
       - name: Verify dependencies
         run: |
-          go mod verify
-          go mod tidy
+          devenv shell -- go mod verify
+          devenv shell -- go mod tidy
           git diff --exit-code go.mod go.sum
 
   # Platform integration tests
@@ -56,28 +58,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
-      - name: Set up Go
-        uses: actions/setup-go@v5
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+
+      - name: Set up Cachix
+        uses: cachix/cachix-action@v16
         with:
-          go-version-file: '.go-version'
-          cache: true
+          name: devenv
+
+      - name: Install devenv
+        run: nix profile add nixpkgs#devenv
 
       - name: Download dependencies
-        run: go mod download
+        run: devenv shell -- go mod download
 
       - name: Run all tests (including integration)
-        run: go test -v -race -coverprofile=coverage.txt -covermode=atomic ./...
+        run: devenv shell -- go test -v -race -coverprofile=coverage.txt -covermode=atomic ./...
 
       - name: Build Caddy with module
-        run: |
-          go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest
-          xcaddy build --output ./caddy --with github.com/hurricanehrndz/caddy-yaml=.
+        run: devenv shell -- make caddy
 
       - name: Validate test configuration
-        run: |
-          ./caddy validate --config testdata/test-config.yaml --adapter yaml
+        run: devenv shell -- ./build/caddy validate --config testdata/test-config.yaml --adapter yaml
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
