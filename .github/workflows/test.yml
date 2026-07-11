@@ -84,7 +84,7 @@ jobs:
         run: devenv shell -- ./build/caddy validate --config testdata/test-config.yaml --adapter yaml
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           flags: integration,${{ runner.os }}
